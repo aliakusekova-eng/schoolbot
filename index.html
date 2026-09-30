@@ -1,187 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SchoolBot — КГУ «Привольная средняя школа»</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #eef6ff, #f6f3ff);
-    color: #1f2937;
-  }
-  .wrap { max-width: 820px; margin: 28px auto; padding: 16px; }
-  .school { text-align:center; font-size:15px; margin-bottom:8px; color:#475569; }
-  .card {
-    background:#fff; border-radius:22px; box-shadow:0 12px 35px rgba(0,0,0,.10);
-    overflow:hidden;
-  }
-  .header { padding:22px; text-align:center; border-bottom:1px solid #e5e7eb; }
-  .header h1 { margin:0; font-size:32px; }
-  .header p { margin:7px 0 0; color:#64748b; }
-  .buttons {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:10px; padding:16px; background:#f8fafc;
-  }
-  button {
-    border:0; border-radius:14px; padding:12px 10px; font-size:15px;
-    cursor:pointer; background:white; box-shadow:0 2px 8px rgba(0,0,0,.08);
-  }
-  button:hover { transform:translateY(-1px); }
-  #messages { height:360px; overflow-y:auto; padding:18px; background:#fff; }
-  .msg { max-width:82%; padding:11px 13px; border-radius:15px; margin:8px 0; line-height:1.4; white-space:pre-line; }
-  .bot { background:#eaf4ff; border-bottom-left-radius:5px; }
-  .user { background:#e9f9ef; margin-left:auto; border-bottom-right-radius:5px; }
-  .inputRow { display:flex; gap:8px; padding:15px; border-top:1px solid #e5e7eb; }
-  input { flex:1; border:1px solid #cbd5e1; border-radius:13px; padding:13px; font-size:16px; }
-  .send { background:#2563eb; color:#fff; padding:12px 18px; box-shadow:none; }
-  .footer { text-align:center; padding:0 10px 16px; color:#94a3b8; font-size:12px; }
-  @media(max-width:520px){ .wrap{margin:0;padding:0}.card{border-radius:0}.header h1{font-size:27px}#messages{height:330px} }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="school">КГУ «Привольная средняя школа» • 5 класс</div>
-  <div class="card">
-    <div class="header">
-      <h1>🤖 SchoolBot</h1>
-      <p>Виртуальный помощник пятиклассника</p>
-    </div>
-
-    <div class="buttons">
-      <button onclick="showSchedule()">📚 Расписание уроков</button>
-      <button onclick="showBells()">🔔 Расписание звонков</button>
-      <button onclick="showRooms()">🏫 Кабинеты</button>
-      <button onclick="showEvents()">🎉 Мероприятия</button>
-      <button onclick="showHolidays()">🍂 Каникулы</button>
-      <button onclick="showHomework()">➗ Домашнее задание</button>
-      <button onclick="showFAQ()">❓ Частые вопросы</button>
-    </div>
-
-    <div id="messages">
-      <div class="msg bot">Здравствуйте! 👋 Я SchoolBot.
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#eef4ff;color:#1f2937}
+.wrap{max-width:820px;margin:28px auto;padding:16px}.school{text-align:center;color:#475569;margin-bottom:8px}
+.card{background:#fff;border-radius:22px;box-shadow:0 12px 35px #0002;overflow:hidden}
+.header{text-align:center;padding:22px;border-bottom:1px solid #e5e7eb}.header h1{margin:0;font-size:32px}.header p{color:#64748b}
+.buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:16px;background:#f8fafc}
+button{border:0;border-radius:14px;padding:12px 10px;font-size:15px;cursor:pointer;background:#fff;box-shadow:0 2px 8px #0001}
+#messages{height:360px;overflow-y:auto;padding:18px}.msg{max-width:82%;padding:11px 13px;border-radius:15px;margin:8px 0;line-height:1.4;white-space:pre-line}
+.bot{background:#eaf4ff}.user{background:#e9f9ef;margin-left:auto}.inputRow{display:flex;gap:8px;padding:15px;border-top:1px solid #e5e7eb}
+input{flex:1;border:1px solid #cbd5e1;border-radius:13px;padding:13px;font-size:16px}.send{background:#2563eb;color:#fff;padding:12px 18px}
+.footer{text-align:center;padding:0 10px 16px;color:#94a3b8;font-size:12px}
+</style></head><body>
+<div class="wrap"><div class="school">КГУ «Привольная средняя школа» • 5 класс</div><div class="card">
+<div class="header"><h1>🤖 SchoolBot</h1><p>Виртуальный помощник пятиклассника</p></div>
+<div class="buttons">
+<button type="button" onclick="showSchedule()">📚 Расписание уроков</button>
+<button type="button" onclick="showBells()">🔔 Расписание звонков</button>
+<button type="button" onclick="showRooms()">🏫 Кабинеты</button>
+<button type="button" onclick="showEvents()">🎉 Мероприятия</button>
+<button type="button" onclick="showHolidays()">🍂 Каникулы</button>
+<button type="button" onclick="showHomework()">➗ Домашнее задание</button>
+<button type="button" onclick="showFAQ()">❓ Частые вопросы</button>
+</div>
+<div id="messages"><div class="msg bot">Здравствуйте! 👋 Я SchoolBot.
 Я помогу узнать расписание, время уроков, кабинеты, мероприятия, каникулы и домашнее задание по математике.
 
-Нажмите на кнопку или напишите вопрос.</div>
-    </div>
-
-    <div class="inputRow">
-      <input id="question" placeholder="Например: Что в среду?" onkeydown="if(event.key==='Enter') sendQuestion()">
-      <button class="send" onclick="sendQuestion()">Отправить</button>
-    </div>
-    <div class="footer">SchoolBot работает по заранее заданному алгоритму и не использует искусственный интеллект.</div>
-  </div>
-</div>
-
+Нажмите на кнопку или напишите вопрос.</div></div>
+<div class="inputRow"><input id="question" placeholder="Например: Что в среду?"><button type="button" class="send" id="sendButton">Отправить</button></div>
+<div class="footer">SchoolBot работает по заранее заданному алгоритму и не использует искусственный интеллект.</div>
+</div></div>
 <script>
-// ==========================================================
-Данные для изменения  // После изменения нажмите Commit changes в GitHub.
-// ==========================================================
-
-const homework = {
-  date: "24 сентября 2026 ннн",
-  text: "№195, №197, стр. 76"
-};
-
-const holidays = "с 26 октября по 1 ноября 2026 года";
-
-const events = [
-  "Каждую среду — кружок «Робототехника».",
-  "21 сентября 2026 — классный час «Труд и ответственность».",
-  "28 сентября 2026 — классный час «Мой Казахстан: мой вклад в будущее страны»", 
- "2 октября будет День Дублера",
- "8 октября - Осенний бал",
- "5 октября - классный час".
+// ДАННЫЕ ДЛЯ УЧИТЕЛЯ — МЕНЯЙТЕ ИНФОРМАЦИЮ ТОЛЬКО ЗДЕСЬ
+const homework={date:"24 сентября 2026",text:"№195, №197, стр. 76"};
+const holidays="с 26 октября по 1 ноября 2026 года";
+const events=[
+"Каждую среду — кружок «Робототехника».",
+"21 сентября 2026 — классный час «Труд и ответственность».",
+"28 сентября 2026 — классный час «Мой Казахстан: мой вклад в будущее страны».",
+"2 октября 2026 — День дублёра.",
+"5 октября 2026 — классный час.",
+"8 октября 2026 — Осенний бал."
 ];
+const schedule={
+"понедельник":["Математика","Иностранный язык","Русский язык","Естествознание","История Казахстана","Физическая культура"],
+"вторник":["Казахский язык","Математика","Иностранный язык","История Казахстана","Русский язык"],
+"среда":["Математика","Естествознание","Информатика и ИИ","Казахский язык","Русский язык","Художественный труд"],
+"четверг":["Казахский язык","Русская литература","Физическая культура","Математика","Иностранный язык","Художественный труд"],
+"пятница":["Математика","Всемирная история","Казахский язык","Физическая культура","Музыка","Русская литература"]};
+const bells=["08:30–09:15","09:20–10:05","10:20–11:05","11:20–12:05","12:10–12:55","13:00–13:45"];
+const rooms=[["Математика","№3"],["Информатика и ИИ","№2"],["Казахский язык","№4"],["Русский язык / литература","№5"],["Иностранный язык (английский)","№6"],["История","№7"],["Естествознание","№8"],["Классный час","№7"],["Физическая культура","спортзал"],["Художественный труд","№9"]];
 
-const schedule = {
-  "понедельник": ["Математика","Иностранный язык","Русский язык","Естествознание","История Казахстана","Физическая культура"],
-  "вторник": ["Казахский язык","Математика","Иностранный язык","История Казахстана","Русский язык"],
-  "среда": ["Математика","Естествознание","Информатика и ИИ","Казахский язык","Русский язык","Художественный труд"],
-  "четверг": ["Казахский язык","Русская литература","Физическая культура","Математика","Иностранный язык","Художественный труд"],
-  "пятница": ["Математика","Всемирная история","Казахский язык","Физическая культура","Музыка","Русская литература"]
-};
-
-const bells = ["08:30–09:15","09:20–10:05","10:20–11:05","11:20–12:05","12:10–12:55","13:00–13:45"];
-
-const rooms = [
-  ["Математика","№3"],["Информатика и ИИ","№2"],["Казахский язык","№4"],
-  ["Русский язык / литература","№5"],["Иностранный язык (английский)","№6"],
-  ["История","№7"],["Естествознание","№8"],["Классный час","№7"],
-  ["Физическая культура","спортзал"],["Художественный труд","№9"]
-];
-
-// ==========================================================
-// НИЖЕ ПРОГРАММНЫЙ КОД — ЕГО ЛУЧШЕ НЕ ИЗМЕНЯТЬ
-// ==========================================================
-
-function add(text, who="bot"){
-  const m=document.getElementById("messages");
-  const d=document.createElement("div");
-  d.className="msg "+who;
-  d.textContent=text;
-  m.appendChild(d);
-  m.scrollTop=m.scrollHeight;
-}
-function formatDay(day){
-  return "📚 "+day[0].toUpperCase()+day.slice(1)+":\n"+schedule[day].map((x,i)=>(i+1)+". "+x).join("\n");
-}
-function showSchedule(){ add(Object.keys(schedule).map(formatDay).join("\n\n")); }
-function showBells(){ add("🔔 Расписание звонков:\n"+bells.map((x,i)=>(i+1)+" урок — "+x).join("\n")+"\n\nБольшие перемены после 2-го и 3-го уроков — по 15 минут."); }
-function showRooms(){ add("🏫 Кабинеты:\n"+rooms.map(x=>x[0]+" — "+x[1]).join("\n")); }
-function showEvents(){ add("🎉 Мероприятия:\n• "+events.join("\n• ")); }
-function showHolidays(){ add("🍂 Каникулы: "+holidays+"."); }
-function showHomework(){ add("➗ Математика, "+homework.date+":\n"+homework.text+"."); }
-function showFAQ(){ add("❓ Можно спросить:\n• Что в среду?\n• Во сколько третий урок?\n• Где математика?\n• Когда робототехника?\n• Когда каникулы?\n• Что задано по математике?"); }
-
+// НИЖЕ ПРОГРАММНЫЙ КОД — НЕ ИЗМЕНЯТЬ
+function add(text,who="bot"){const m=document.getElementById("messages"),d=document.createElement("div");d.className="msg "+who;d.textContent=text;m.appendChild(d);m.scrollTop=m.scrollHeight}
+function formatDay(day){return "📚 "+day[0].toUpperCase()+day.slice(1)+":\n"+schedule[day].map((x,i)=>(i+1)+". "+x).join("\n")}
+function showSchedule(){add(Object.keys(schedule).map(formatDay).join("\n\n"))}
+function showBells(){add("🔔 Расписание звонков:\n"+bells.map((x,i)=>(i+1)+" урок — "+x).join("\n"))}
+function showRooms(){add("🏫 Кабинеты:\n"+rooms.map(x=>x[0]+" — "+x[1]).join("\n"))}
+function showEvents(){add("🎉 Мероприятия:\n• "+events.join("\n• "))}
+function showHolidays(){add("🍂 Каникулы: "+holidays+".")}
+function showHomework(){add("➗ Математика, "+homework.date+":\n"+homework.text+".")}
+function showFAQ(){add("❓ Можно спросить:\n• Что в среду?\n• Во сколько третий урок?\n• Где математика?\n• Какие мероприятия?\n• Когда каникулы?\n• Что задано по математике?")}
 function sendQuestion(){
-  const input=document.getElementById("question");
-  const raw=input.value.trim();
-  if(!raw) return;
-  add(raw,"user");
-  const q=raw.toLowerCase();
-  input.value="";
-
-  for(const day of Object.keys(schedule)){
-    if(q.includes(day) || q.includes(day.slice(0,-1))){
-      add(formatDay(day)); return;
-    }
-  }
-
-  const ordinal = [
-    ["перв",0],["втор",1],["трет",2],["четверт",3],["пят",4],["шест",5]
-  ];
-  if(q.includes("урок") && (q.includes("во сколько") || q.includes("время") || q.includes("звон"))){
-    for(const [word,i] of ordinal){
-      if(q.includes(word)){ add("🔔 "+(i+1)+"-й урок: "+bells[i]+"."); return; }
-    }
-  }
-
-  if(q.includes("звон") || q.includes("время урок")) { showBells(); return; }
-  if(q.includes("каникул")) { showHolidays(); return; }
-  if(q.includes("робот")) { add("🤖 Кружок «Робототехника» проходит каждую среду."); return; }
-  if(q.includes("мероприят") || q.includes("классн") || q.includes("труд и ответствен") || q.includes("мой казахстан")) { showEvents(); return; }
-  if(q.includes("домаш") || q.includes("дз") || q.includes("задан") || (q.includes("математ") && q.includes("23"))) { showHomework(); return; }
-
-  const roomKeys = [
-    ["математ","Математика — кабинет №3."],["информ","Информатика и ИИ — кабинет №2."],
-    ["казах","Казахский язык — кабинет №4."],["русск","Русский язык / литература — кабинет №5."],
-    ["англий","Иностранный язык (английский) — кабинет №6."],["иностран","Иностранный язык (английский) — кабинет №6."],
-    ["истори","История — кабинет №7."],["естеств","Естествознание — кабинет №8."],
-    ["физкультур","Физическая культура проходит в спортзале."],["спорт","Физическая культура проходит в спортзале."],
-    ["худ","Художественный труд — кабинет №9."]
-  ];
-  if(q.includes("где") || q.includes("кабинет")){
-    for(const [key,ans] of roomKeys){ if(q.includes(key)){ add("🏫 "+ans); return; } }
-    showRooms(); return;
-  }
-
-  if(q.includes("расписан")) { showSchedule(); return; }
-
-  add("Я пока не знаю ответа на этот вопрос. Попробуйте спросить о расписании, звонках, кабинетах, мероприятиях, каникулах или домашнем задании по математике.");
+const input=document.getElementById("question"),raw=input.value.trim();if(!raw)return;add(raw,"user");const q=raw.toLowerCase();input.value="";
+for(const day of Object.keys(schedule)){if(q.includes(day)||q.includes(day.slice(0,-1))){add(formatDay(day));return}}
+const ordinal=[["перв",0],["втор",1],["трет",2],["четверт",3],["пят",4],["шест",5]];
+if(q.includes("урок")&&(q.includes("во сколько")||q.includes("время")||q.includes("звон"))){for(const [w,i] of ordinal){if(q.includes(w)){add("🔔 "+(i+1)+"-й урок: "+bells[i]+".");return}}}
+if(q.includes("звон")||q.includes("время урок")){showBells();return}
+if(q.includes("каникул")){showHolidays();return}
+if(q.includes("робот")){add("🤖 Кружок «Робототехника» проходит каждую среду.");return}
+if(q.includes("мероприят")||q.includes("классн")||q.includes("дубл")||q.includes("осенн")||q.includes("мой казахстан")||q.includes("труд и ответствен")){showEvents();return}
+if(q.includes("домаш")||q.includes("дз")||q.includes("задан")){showHomework();return}
+const rk=[["математ","Математика — кабинет №3."],["информ","Информатика и ИИ — кабинет №2."],["казах","Казахский язык — кабинет №4."],["русск","Русский язык / литература — кабинет №5."],["англий","Иностранный язык (английский) — кабинет №6."],["иностран","Иностранный язык (английский) — кабинет №6."],["истори","История — кабинет №7."],["естеств","Естествознание — кабинет №8."],["физкультур","Физическая культура проходит в спортзале."],["спорт","Физическая культура проходит в спортзале."],["худ","Художественный труд — кабинет №9."]];
+if(q.includes("где")||q.includes("кабинет")){for(const [k,a] of rk){if(q.includes(k)){add("🏫 "+a);return}}showRooms();return}
+if(q.includes("расписан")){showSchedule();return}
+add("Я пока не знаю ответа на этот вопрос. Попробуйте спросить о расписании, звонках, кабинетах, мероприятиях, каникулах или домашнем задании по математике.");
 }
-</script>
-</body>
-</html>
+document.getElementById("sendButton").addEventListener("click",sendQuestion);
+document.getElementById("question").addEventListener("keydown",e=>{if(e.key==="Enter")sendQuestion()});
+</script></body></html>
