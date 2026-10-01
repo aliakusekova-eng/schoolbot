@@ -18,22 +18,22 @@ input{flex:1;border:1px solid #cbd5e1;border-radius:13px;padding:13px;font-size:
 <div class="wrap"><div class="school">КГУ «Привольная средняя школа» • 5 класс</div><div class="card">
 <div class="header"><h1>🤖 SchoolBot</h1><p>Виртуальный помощник пятиклассника</p></div>
 <div class="buttons">
-<button type="button" onclick="showSchedule()">📚 Расписание уроков</button>
+<button type="button" onclick="showScheduleFromSheet()">📚 Расписание уроков</button>
 <button type="button" onclick="showBells()">🔔 Расписание звонков</button>
 <button type="button" onclick="showRooms()">🏫 Кабинеты</button>
-<button type="button" onclick="showEvents()">🎉 Мероприятия</button>
-<button type="button" onclick="showHolidays()">🍂 Каникулы</button>
-<button type="button" onclick="showHomework()">➗ Домашнее задание</button>
+<button type="button" onclick="showEventsFromSheet()">🎉 Мероприятия</button>
+<button type="button" onclick="showHolidaysFromSheet()">🍂 Каникулы</button>
+<button type="button" onclick="showHomeworkFromSheet()">➗ Домашнее задание</button>
 <button type="button" onclick="showFAQ()">❓ Частые вопросы</button>
-<button type="button" onclick="showDuty()">👥 Дежурство</button>
-<button type="button" onclick="showCanteen()">🍽️ Столовая</button>
+<button type="button" onclick="showDutyFromSheet()">👥 Дежурство</button>
+<button type="button" onclick="showCanteenFromSheet()">🍽️ Столовая</button>
 </div>
 <div id="messages"><div class="msg bot">Здравствуйте! 👋 Я SchoolBot.
 Я помогу узнать расписание, время уроков, кабинеты, мероприятия, каникулы и домашнее задание по математике.
 
 Нажмите на кнопку или напишите вопрос.</div></div>
 <div class="inputRow"><input id="question" placeholder="Например: Что в среду?"><button type="button" class="send" id="sendButton">Отправить</button></div>
-<div class="footer">SchoolBot работает по заранее заданному алгоритму и не использует искусственный интеллект.</div>
+<div class="footer">SchoolBot работает по алгоритму. Изменяемые данные загружаются из Google Таблицы.</div>
 </div></div>
 <script>
 // ДАННЫЕ ДЛЯ УЧИТЕЛЯ — МЕНЯЙТЕ ИНФОРМАЦИЮ ТОЛЬКО ЗДЕСЬ
@@ -76,11 +76,96 @@ const rooms=[
 ["Иностранный язык (английский)","№6","Лора Анатольевна"],
 ["История","№7","Орал Нуржанович"],
 ["Естествознание","№8","Нургуль Талгатовна"],
-["Классный час","№7","Анжела Станиславовна"],
+["Классный час","№7",""],
 ["Физическая культура","спортзал","Вячеслав Вячеславович"],
 ["Художественный труд","№9","Нина Сергеевна"],
 ["Музыка","№10, 2-й этаж","Касымов Мухтар"]
 ];
+
+
+// GOOGLE ТАБЛИЦА — эти ссылки менять не нужно
+const sheetUrls = {'homework': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=0&single=true&output=csv', 'canteen': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=1903644238&single=true&output=csv', 'events': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=1360092242&single=true&output=csv', 'duty': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=1429829186&single=true&output=csv', 'schedule': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=1065211323&single=true&output=csv', 'holidays': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQj0yxPMyLp40OaW7cJq8jQocATxX1CSJd-UlWtwonmh9ijpWQ2yF7ltNb37YtLMYp2NZPCoQ-enyab/pub?gid=1530986060&single=true&output=csv'};
+
+// Корректный разбор CSV, включая запятые внутри меню и других ячеек
+function parseCSV(text) {
+  const rows=[]; let row=[], cell="", quoted=false;
+  for(let i=0;i<text.length;i++) {
+    const ch=text[i], next=text[i+1];
+    if(ch === '"') {
+      if(quoted && next === '"') { cell+='"'; i++; }
+      else quoted=!quoted;
+    } else if(ch === ',' && !quoted) {
+      row.push(cell.trim()); cell="";
+    } else if((ch === '\n' || ch === '\r') && !quoted) {
+      if(ch === '\r' && next === '\n') i++;
+      row.push(cell.trim()); cell="";
+      if(row.some(x=>x!=="")) rows.push(row);
+      row=[];
+    } else cell+=ch;
+  }
+  if(cell!=="" || row.length) { row.push(cell.trim()); if(row.some(x=>x!=="")) rows.push(row); }
+  return rows;
+}
+
+async function loadCSV(url) {
+  const response=await fetch(url + "&t=" + Date.now(), {cache:"no-store"});
+  if(!response.ok) throw new Error("Не удалось загрузить таблицу");
+  return parseCSV(await response.text());
+}
+
+async function showHomeworkFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.homework);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]||r[2]);
+    if(!data.length) return add("➗ В таблице пока нет домашнего задания.");
+    const r=data[data.length-1];
+    add("➗ Домашнее задание:\nДата: "+(r[0]||"—")+"\nПредмет: "+(r[1]||"—")+"\n"+(r[2]||"—"));
+  } catch(e) { add("⚠️ Не удалось загрузить ДЗ из Google Таблицы. Попробуйте обновить страницу."); }
+}
+
+async function showEventsFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.events);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]);
+    add(data.length ? "🎉 Мероприятия:\n"+data.map(r=>"• "+(r[0]||"")+" — "+(r[1]||"")).join("\n") : "🎉 В таблице пока нет мероприятий.");
+  } catch(e) { add("⚠️ Не удалось загрузить мероприятия из Google Таблицы."); }
+}
+
+async function showDutyFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.duty);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]);
+    add(data.length ? "👥 Дежурство по классу:\n"+data.map(r=>"• "+(r[0]||"")+" — "+(r[1]||"")).join("\n") : "👥 В таблице пока нет данных о дежурстве.");
+  } catch(e) { add("⚠️ Не удалось загрузить дежурство из Google Таблицы."); }
+}
+
+async function showCanteenFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.canteen);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]||r[2]);
+    add(data.length ? "🍽️ Меню столовой:\n"+data.map(r=>"• "+(r[0]||"")+": "+(r[1]||"")+" ("+(r[2]||"")+" )").join("\n\n") : "🍽️ В таблице пока нет меню.");
+  } catch(e) { add("⚠️ Не удалось загрузить меню из Google Таблицы."); }
+}
+
+async function showScheduleFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.schedule);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]||r[2]);
+    if(!data.length) return add("📚 В таблице пока нет расписания.");
+    const groups={};
+    data.forEach(r=>{ const day=r[0]||"Без дня"; (groups[day]??=[]).push([r[1],r[2]]); });
+    add(Object.entries(groups).map(([day,items])=>"📚 "+day+":\n"+items.map(x=>(x[0]||"")+" урок — "+(x[1]||"")).join("\n")).join("\n\n"));
+  } catch(e) { add("⚠️ Не удалось загрузить расписание из Google Таблицы."); }
+}
+
+async function showHolidaysFromSheet() {
+  try {
+    const rows=await loadCSV(sheetUrls.holidays);
+    const data=rows.slice(1).filter(r=>r[0]||r[1]||r[2]);
+    add(data.length ? "🍂 Каникулы:\n"+data.map(r=>"• "+(r[2]||"Каникулы")+": "+(r[0]||"—")+" — "+(r[1]||"—")).join("\n") : "🍂 В таблице пока нет данных о каникулах.");
+  } catch(e) { add("⚠️ Не удалось загрузить каникулы из Google Таблицы."); }
+}
+
 
 // НИЖЕ ПРОГРАММНЫЙ КОД — НЕ ИЗМЕНЯТЬ
 function add(text,who="bot"){const m=document.getElementById("messages"),d=document.createElement("div");d.className="msg "+who;d.textContent=text;m.appendChild(d);m.scrollTop=m.scrollHeight}
@@ -98,18 +183,18 @@ function sendQuestion(){
 const input=document.getElementById("question"),raw=input.value.trim();if(!raw)return;add(raw,"user");const q=raw.toLowerCase();input.value="";
 if(q.includes("дежур")){
 for(const day of Object.keys(duty)){if(q.includes(day)||q.includes(day.slice(0,-1))){add("👥 "+day[0].toUpperCase()+day.slice(1)+": "+duty[day]+".");return}}
-showDuty();return}
+showDutyFromSheet();return}
 if(q.includes("столов")||q.includes("меню")||q.includes("обед")||q.includes("тенге")||q.includes("стоит")){
 for(const day of Object.keys(canteen)){if(q.includes(day)||q.includes(day.slice(0,-1))){add("🍽️ "+day[0].toUpperCase()+day.slice(1)+":\n"+canteen[day].menu+"\nСтоимость: "+canteen[day].price+".");return}}
-showCanteen();return}
+showCanteenFromSheet();return}
 for(const day of Object.keys(schedule)){if(q.includes(day)||q.includes(day.slice(0,-1))){add(formatDay(day));return}}
 const ordinal=[["перв",0],["втор",1],["трет",2],["четверт",3],["пят",4],["шест",5]];
 if(q.includes("урок")&&(q.includes("во сколько")||q.includes("время")||q.includes("звон"))){for(const [w,i] of ordinal){if(q.includes(w)){add("🔔 "+(i+1)+"-й урок: "+bells[i]+".");return}}}
 if(q.includes("звон")||q.includes("время урок")){showBells();return}
-if(q.includes("каникул")){showHolidays();return}
+if(q.includes("каникул")){showHolidaysFromSheet();return}
 if(q.includes("робот")){add("🤖 Кружок «Робототехника» проходит каждую среду.");return}
-if(q.includes("мероприят")||q.includes("классн")||q.includes("дубл")||q.includes("осенн")||q.includes("мой казахстан")||q.includes("труд и ответствен")){showEvents();return}
-if(q.includes("домаш")||q.includes("дз")||q.includes("задан")){showHomework();return}
+if(q.includes("мероприят")||q.includes("классн")||q.includes("дубл")||q.includes("осенн")||q.includes("мой казахстан")||q.includes("труд и ответствен")){showEventsFromSheet();return}
+if(q.includes("домаш")||q.includes("дз")||q.includes("задан")){showHomeworkFromSheet();return}
 const rk=[
 ["математ","Математика — кабинет №3. Учитель: Алия Бейсенбаевна."],
 ["информ","Информатика и ИИ — кабинет №2. Учитель: Александр Валерьевич."],
@@ -125,7 +210,7 @@ const rk=[
 ["музык","Музыка — кабинет №10, 2-й этаж. Учитель: Касымов Мухтар."]
 ];
 if(q.includes("где")||q.includes("кабинет")||q.includes("учител")||q.includes("ведёт")||q.includes("ведет")||q.includes("препода")){for(const [k,a] of rk){if(q.includes(k)){add("🏫 "+a);return}}showRooms();return}
-if(q.includes("расписан")){showSchedule();return}
+if(q.includes("расписан")){showScheduleFromSheet();return}
 add("Я пока не знаю ответа на этот вопрос. Попробуйте спросить о расписании, звонках, кабинетах, мероприятиях, каникулах или домашнем задании по математике.");
 }
 document.getElementById("sendButton").addEventListener("click",sendQuestion);
