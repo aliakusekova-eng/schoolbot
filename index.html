@@ -25,6 +25,8 @@ input{flex:1;border:1px solid #cbd5e1;border-radius:13px;padding:13px;font-size:
 <button type="button" onclick="showHolidays()">🍂 Каникулы</button>
 <button type="button" onclick="showHomework()">➗ Домашнее задание</button>
 <button type="button" onclick="showFAQ()">❓ Частые вопросы</button>
+<button type="button" onclick="showDuty()">👥 Дежурство</button>
+<button type="button" onclick="showCanteen()">🍽️ Столовая</button>
 </div>
 <div id="messages"><div class="msg bot">Здравствуйте! 👋 Я SchoolBot.
 Я помогу узнать расписание, время уроков, кабинеты, мероприятия, каникулы и домашнее задание по математике.
@@ -35,7 +37,7 @@ input{flex:1;border:1px solid #cbd5e1;border-radius:13px;padding:13px;font-size:
 </div></div>
 <script>
 // ДАННЫЕ ДЛЯ УЧИТЕЛЯ — МЕНЯЙТЕ ИНФОРМАЦИЮ ТОЛЬКО ЗДЕСЬ
-const homework={date:"5 октября 2026",text:"№211, №213, стр. 89"};
+const homework={date:"24 сентября 2026",text:"№195, №197, стр. 76"};
 const holidays="с 26 октября по 1 ноября 2026 года";
 const events=[
 "Каждую среду — кружок «Робототехника».",
@@ -45,6 +47,20 @@ const events=[
 "5 октября 2026 — классный час.",
 "8 октября 2026 — Осенний бал."
 ];
+const duty={
+"понедельник":"Амирболат Адият, Гиндемид Глеб",
+"вторник":"Кабиденова Ясмин, Катрань Денис",
+"среда":"Кухарев Николай, Левченко Богдан",
+"четверг":"Семакина Арина",
+"пятница":"Орехова Елизавета, Шульц Ярослав"
+};
+const canteen={
+"понедельник":{menu:"Салат морковно-капустный, борщ, чай с сахаром, хлеб",price:"290 тенге"},
+"вторник":{menu:"Винегрет, гуляш с рисом, компот, хлеб",price:"495 тенге"},
+"среда":{menu:"Салат морковный с сахаром, котлета с пюре, кисель, хлеб",price:"455 тенге"},
+"четверг":{menu:"Салат свекольный с чесноком, тефтели с гречкой, чай с сахаром, хлеб",price:"415 тенге"},
+"пятница":{menu:"Плов с мясом, салат морковно-капустный, компот, хлеб",price:"385 тенге"}
+};
 const schedule={
 "понедельник":["Математика","Иностранный язык","Русский язык","Естествознание","История Казахстана","Физическая культура"],
 "вторник":["Казахский язык","Математика","Иностранный язык","История Казахстана","Русский язык"],
@@ -63,9 +79,17 @@ function showRooms(){add("🏫 Кабинеты:\n"+rooms.map(x=>x[0]+" — "+x[
 function showEvents(){add("🎉 Мероприятия:\n• "+events.join("\n• "))}
 function showHolidays(){add("🍂 Каникулы: "+holidays+".")}
 function showHomework(){add("➗ Математика, "+homework.date+":\n"+homework.text+".")}
-function showFAQ(){add("❓ Можно спросить:\n• Что в среду?\n• Во сколько третий урок?\n• Где математика?\n• Какие мероприятия?\n• Когда каникулы?\n• Что задано по математике?")}
+function showDuty(){add("👥 Дежурство по классу:\n"+Object.keys(duty).map(d=>"• "+d[0].toUpperCase()+d.slice(1)+" — "+duty[d]).join("\n"))}
+function showCanteen(){add("🍽️ Меню столовой:\n"+Object.keys(canteen).map(d=>"• "+d[0].toUpperCase()+d.slice(1)+": "+canteen[d].menu+" ("+canteen[d].price+")").join("\n\n"))}
+function showFAQ(){add("❓ Можно спросить:\n• Что в среду?\n• Во сколько третий урок?\n• Где математика?\n• Какие мероприятия?\n• Когда каникулы?\n• Что задано по математике?\n• Кто дежурит в среду?\n• Что в столовой во вторник?\n• Сколько стоит обед в пятницу?")}
 function sendQuestion(){
 const input=document.getElementById("question"),raw=input.value.trim();if(!raw)return;add(raw,"user");const q=raw.toLowerCase();input.value="";
+if(q.includes("дежур")){
+for(const day of Object.keys(duty)){if(q.includes(day)||q.includes(day.slice(0,-1))){add("👥 "+day[0].toUpperCase()+day.slice(1)+": "+duty[day]+".");return}}
+showDuty();return}
+if(q.includes("столов")||q.includes("меню")||q.includes("обед")||q.includes("тенге")||q.includes("стоит")){
+for(const day of Object.keys(canteen)){if(q.includes(day)||q.includes(day.slice(0,-1))){add("🍽️ "+day[0].toUpperCase()+day.slice(1)+":\n"+canteen[day].menu+"\nСтоимость: "+canteen[day].price+".");return}}
+showCanteen();return}
 for(const day of Object.keys(schedule)){if(q.includes(day)||q.includes(day.slice(0,-1))){add(formatDay(day));return}}
 const ordinal=[["перв",0],["втор",1],["трет",2],["четверт",3],["пят",4],["шест",5]];
 if(q.includes("урок")&&(q.includes("во сколько")||q.includes("время")||q.includes("звон"))){for(const [w,i] of ordinal){if(q.includes(w)){add("🔔 "+(i+1)+"-й урок: "+bells[i]+".");return}}}
